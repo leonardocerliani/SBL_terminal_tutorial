@@ -5,4 +5,4 @@ It is divided in different parts: 01_computing, 02_terminal_usage, 03_storm_acce
 
 Basic requirements: know how to open a terminal, have Twingate access, Storm account and install Visual Studio Code
 
-
+Please see [proposed_plan_tutorial.md](https://github.com/franciscaabsr/SBL_terminal_tutorial/blob/main/proposed_plan_tutorial.md) for the tutorial plan.
