@@ -82,7 +82,77 @@ done
 ```
 
 ## Doing it in parallel with xargs
+The processes we have used so far are very fast, but in real cases, each of them could take several minutes if not hours.
 
+It would be therefore very advantageous if we could do them all in parallel.
+
+To show the advantage in time, we will make a slight modification. We will put all the code in a script, which accepts a variable for the numbers 1..10. We will then pass a list (a text file) containing the numbers 1..10. 
+
+NB: It is not necessary to create a separate list. We could also define a bash function inside the script and pass a bash array to it. But that's a bit advanced for the moment, so let's use a simpler implementation.
+
+Create a script called `process_one_image.sh` inside the `images` directory and put the following code inside
+
+```bash
+i=$1
+
+echo "Downloading random image to img${i}.jpg"
+wget -q -O "img_${i}.jpg" "https://picsum.photos/200"
+sleep 0.2
+
+# Make it a painting
+convert img_${i}.jpg -paint 3 paint_${i}.jpg
+
+# Make the painting a polaroid
+convert paint_${i}.jpg +polaroid polaroid_${i}.jpg
+
+# Remove the initial images and the paintings
+rm img_${i}.jpg paint_${i}.jpg
+```
+
+the line `i=$1` instructs the script to take the first argument passed to it and assign it to the variable `i`. Now we can run the script as follows:
+
+```bash
+# First make sure it is executable
+chmod +x process_one_image.sh
+
+# Call it with an argument (note the ./)
+./process_one_image.sh 8
+```
+
+As expected, we got the `polaroid_8.jpg` image.
+
+Now, if you want to use a for loop, you can do:
+
+```bash
+for i in $(seq 1 5); do
+  ./process_one_image.sh ${i}
+done
+```
+
+If we prepend the command `time` to the for loop, we can see that it takes just below 3 seconds.
+
+Now let's create a list with the numbers from 1..10:
+```bash
+rm img_list.txt
+for i in $(seq 1 10); do
+  echo ${i} >> img_list.txt
+done
+```
+
+Then we use the `xargs` command to feed all the elements in the img_list.txt file into the script to (download and) process the images
+
+```bash
+cat img_list.txt | xargs -n 1 -P 10 -I{} ./process_one_image.sh {}
+```
+
+If we prepend the `time` command, we can see that the whole process took about half a second. That is because all the images were downloaded and processed at once.
+
+What are the arguments of `xargs`?
+- `-n 1` : this means that we want to pass to the image processing function only value at the time coming from the img_list.txt
+
+- `-P 10` : this is crucial to control how many instances of the image processing function we want to run in parallel. In this case we run them altogether since the process takes very little time. To verify, try running 5 processes at once instead of 10.
+
+- `-I{}` : indicates that the value passed by the cat will also be the argument of `./process_one_image.sh`, and that is why there is also a `{}` at the end.
 
 
 
