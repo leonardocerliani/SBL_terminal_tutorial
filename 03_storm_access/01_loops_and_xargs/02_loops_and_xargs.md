@@ -1,7 +1,7 @@
 # For loops and parallel execution
 
 ## The basic for loop
-Many times we need to execute the same function for different elements, for instance applying the same processing to many images, where the only variable is the image name.
+Many times we need to execute the same function on different elements, for instance applying the same processing to many images, where the only variable is the image name.
 
 In this case we can proceed in two ways:
 - writing a function that takes the variable as an arguments and runs it for all value of the variable
@@ -12,6 +12,12 @@ Let's start with the simplest case: the for loop. The pseudo-code would be somet
 ```bash
 for [i = variable values]; do 
   [something with] ${i}
+done
+
+# example
+for i in $(seq 10 -1 1); do
+	echo "$i seconds left..."
+  sleep 1
 done
 ```
 
@@ -81,7 +87,32 @@ for i in $(seq 1 ${n}); do
 done
 ```
 
-## Doing it in parallel with xargs
+
+
+## Passing arguments
+
+Of course we do not want to write all the times the commands line by line. Better making a bash script and running that with one command only.
+
+To edit a script, you can use the `nano` editor in the terminal.
+
+```bash
+nano process_images.sh
+```
+
+We can then write or copy/paste the same code we wrote above and run the script
+
+```
+# First give execution priviledges
+chmod +x process_images.sh
+
+# run it
+./process_images.sh
+```
+
+
+
+## Parallel execution with xargs
+
 The processes we have used so far are very fast, but in real cases, each of them could take several minutes if not hours.
 
 It would be therefore very advantageous if we could do them all in parallel.

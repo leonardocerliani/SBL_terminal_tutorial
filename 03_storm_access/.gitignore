@@ -1,2 +1,3 @@
 .DS_Store
-02_loops_and_xargs/images/*.jpg
+venv*/
+
