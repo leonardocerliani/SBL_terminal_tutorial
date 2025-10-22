@@ -40,7 +40,8 @@ def generate_text(instruction, file_path):
     with open(output_file, "w") as f:
         for i in result.split('.'):
             f.write(i)
+            print(i)
 
-    print(f"Description saved to {output_file}")
+    # print(f"Description saved to {output_file}")
 
 generate_text(instruction, file_path)
