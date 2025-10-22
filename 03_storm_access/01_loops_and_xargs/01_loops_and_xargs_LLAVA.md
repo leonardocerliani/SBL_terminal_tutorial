@@ -10,7 +10,7 @@ We need to call a python script from bash (the content of which you can inspect 
 ```bash
 python -m venv venv_ollama_llava
 source venv_ollama_llava/bin/activate
-pip install -r requirements.txt
+pip install pillow ollama
 ```
 
 
@@ -24,11 +24,14 @@ In this case we can proceed in two ways:
 Let's start with the simplest case: the for loop. The pseudo-code would be something like:
 
 ```bash
+# don't run this! only pseudo-code
 for [i = variable values]; do 
   [something with] ${i}
 done
+```
 
-# example
+For instance you can run:
+```bash
 for i in $(seq 10 -1 1); do
 	echo "$i seconds left..."
   sleep 1
@@ -124,7 +127,7 @@ Of course we do not want to write all of this every time. We can instead put eve
 You can use `nano` which is a very simple terminal-based text editor.
 
 ```bash
-# make sure you are in the images folder, then
+# make sure you are in the directory _above_ the `images` folder, then
 nano generate_polaroids.sh
 
 # copy/paste the code above and save it
