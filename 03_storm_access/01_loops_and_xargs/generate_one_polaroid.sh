@@ -1,3 +1,5 @@
+#!/bin/bash
+
 i=$1
 
 images_dir="$(pwd)/images"

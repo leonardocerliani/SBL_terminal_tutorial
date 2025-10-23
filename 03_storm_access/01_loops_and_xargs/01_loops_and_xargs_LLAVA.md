@@ -5,12 +5,33 @@ We will learn how to build for loops in bash, and then use them in bash script. 
 
 The task will be to download some random images from the internet, feed them to an LLVM (Large Language and Vision Model) to get the description of their content, and finally produce a polaroid-like version of the images with the description inside the image.
 
-We need to call a python script from bash (the content of which you can inspect in `ask_llava.py` but you need not to care about), therefore I need you to run the following lines first.
+> [!IMPORTANT]
+> We need to call a python script from bash (the content of which you can inspect in `ask_llava.py` but you need not to care about), therefore I need you to run the following lines first.
 
 ```bash
+# Create a new directory wherever you prefer and call it loop_n_xargs_tut
+mkdir -p  loop_n_xargs_tut
+cd loop_n_xargs_tut
+
+# Then create a python environment and install the required libraries
 python -m venv venv_ollama_llava
 source venv_ollama_llava/bin/activate
 pip install pillow ollama
+
+```
+
+**For all the code below, make sure that the `venv_ollama_llava` python environment is active. You can check this from your command prompt** 
+
+```bash
+# environment NOT active
+[your_username]@storm:
+
+# run:
+[your_username]@storm: source venv_ollama_llava/bin/activate
+
+# environment active
+(venv_ollama_llava) [your_username]@storm:
+
 ```
 
 
@@ -234,7 +255,9 @@ done
 At this point we can feed the `img_list.txt` in our script to generate the polaroids using a for loop:
 
 ```bash
-for i in $(cat img_list.txt); do
+images_list=${images_dir}/img_list.txt
+
+for i in $(cat ${images_list}); do
   ./generate_one_polaroid.sh ${i}
 done
 ```
