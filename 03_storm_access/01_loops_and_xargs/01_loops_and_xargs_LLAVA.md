@@ -60,18 +60,19 @@ done
 
 A few notes:
 
-- The indentation is not necessary, but highly recommended for readability.
+- The indentation is not necessary in bash scripts as it is instead in python scripts, but highly recommended for readability.
 - Notice also that I echoed the action in the loop. That's also a good practice, for instance for sending it to a log file. 
-- You can also just prepend the echo to the entire `wget` command and do a dry run to see whether you got the syntax right.
+- You can also just prepend `echo` to the entire `wget` command and do a dry run to see whether you got the syntax right.
+
+> [!IMPORTANT]
+> In the following it is assumed that there is already an `images/` directory and that the location is stored in the variable `images_dir="$(pwd)/images"`. If you get an error saying that the image cannot be found, check that you have both.
 
 
-Now we will use AI to ask what is the content of the images. Specifically we will use [LLAVA](https://ollama.com/library/llava), an LVLM (Large Language and Vision Model) which I have added to our [Ollama](https://ollama.com/) server. Let's see first how to use it for one image:
+Now we will use AI to ask what is the content of the images. Specifically we will use [LLAVA](https://ollama.com/library/llava), an LLVM (Large Language and Vision Model) which I have added to our [Ollama](https://ollama.com/) server. 
 
-```bash
-ollama run llava "Describe what is in the image in a very short sentence ${images_dir}/img_1.jpg"
-```
+_NB: We force Ollama to run on CPU on storm, therefore the response will be much slower than what expected when running on GPU_
 
-From now on however, instead of loading the model every time - which is what `ollama run llava ` does - we will use a python script I previously created, which takes image filename and prompt as arguments, and saves the description to a text file in the `images/` directory.
+To ask Ollama to generate a description of the image we feed in, we will use a python script I previously created, which takes as arguments (1) image filename and (2) prompt, and saves the description to a text file in the `images/` directory.
 
 ```bash
 # wget -O "images/img_1.jpg" "https://picsum.photos/600"
@@ -278,4 +279,30 @@ This - in a nutshell - boils down to deciding the number that you pass to the `-
 In some cases, it might not be that easy. For instance if you use [ANTs](https://github.com/ANTsX/ANTs) for image registration - e.g. in [fmirprep](https://fmriprep.org/en/stable/) - be default it takes all the computing power available, and [you need to set a specific environmental variable](https://github.com/ANTsX/ANTs/wiki/Compiling-ANTs-on-Linux-and-Mac-OS#post-installation-control-multi-threading-at-run-time) to prevent this. This is specific to ANTs, and other software will require other methods. This can be difficult to find but, again, it is important.
 
 
+# Appendix - Ollama running on CPU
+I forced Ollama to run only on CPU, therefore it will be much slower than if it would run on GPU.
 
+You can test it with the code below.
+
+<details><summary>How to force ollama to run on CPU</summary>
+
+```bash
+# *Add* the following to /etc/systemd/system/ollama.service
+Environment="CUDA_VISIBLE_DEVICES="
+
+# Then:
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+
+
+# Test with:
+wget -O "test_img.jpg" "https://picsum.photos/600"
+ollama run llava "What is there in the image? $(pwd)/test_img.jpg"
+
+# Verify that there are no GPU processes running
+# otherwise kill -9 [pid]
+watch -n 1 nvidia-smi
+
+```
+
+</details>
