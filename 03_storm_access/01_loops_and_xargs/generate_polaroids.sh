@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # First create an images folder and cd into that. If the directory esists,
 # it will not be overwritten
 images_dir="$(pwd)/images"
